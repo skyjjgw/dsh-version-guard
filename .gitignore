@@ -1,0 +1,14 @@
+node_modules/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 恢复页与快照的本地运行产物
+.dsh-version-guard/
+data/
+
+# 编辑器与系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

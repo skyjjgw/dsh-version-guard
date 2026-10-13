@@ -1,0 +1,14 @@
+# 只追加自己这一行，不替换任何 DSH 官方组件。
+# 宿主插件负责：启动记录、成功启动后自动打回退点、把恢复页 API 挂到
+# /dsh-version-guard，并让客户端在设置里出现「版本守卫」。
+#
+# profile 一般不填：插件会先读启动参数里的 --profile，再读 DSH_PROFILE，
+# 两者都没有时才退回「最近修改过的 profile」并打印警告。只有在那种情况下
+# 它猜错了，才需要在这里写死：
+#   profile: web-enhanced
+- insert:
+    - id: version-guard
+      name: dsh-version-guard
+      config:
+        snapshotOnHealthyBoot: true
+        maxSnapshots: 30
