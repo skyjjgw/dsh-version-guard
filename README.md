@@ -44,6 +44,20 @@ DSH 的插件装在 profile 目录里，由 `package.json` 的 `dsh.profile.bund
 
 ## 安装
 
+### 从 GitHub 安装
+
+在 DSH 可用时，使用官方插件命令安装到实际使用的 profile（下面以 `web` 为例）：
+
+```sh
+dsh plugin --profile web add github:skyjjgw/dsh-version-guard
+```
+
+安装后重启 DSH。仓库已包含可直接运行的 `lib/`，无需额外构建，也未发布到 npm。
+请在发生故障前保存本仓库副本，方便直接运行其中的 `dsh-version-guard.cmd`
+或 `node lib/bin/version-guard.js`；离线入口的使用不依赖 DSH 成功启动。
+
+### 从本地目录安装
+
 ### 1. 放到插件目录
 
 把整个 `dsh-version-guard` 目录放到 DSH 的插件目录，例如：
