@@ -1,6 +1,6 @@
 {
   "name": "dsh-version-guard",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH 版本守卫：记录插件版本与配置快照，插件冲突导致 DSH 崩坏后可脱离 DSH 进程回退到上一个可用版本。 · Plugin version guard with an out-of-process recovery page.",
   "license": "MIT",
   "repository": {
@@ -23,6 +23,10 @@
     "recovery"
   ],
   "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "verify": "node lib/tools/verify-package.js"
+  },
   "main": "lib/host/index.js",
   "engines": {
     "node": ">=22.19.0"

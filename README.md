@@ -133,7 +133,9 @@ dsh-version-guard.cmd --list                :: 列出所有 profile
 ### 方式三：手动定位问题插件
 
 如果不想整体回退，在恢复页的「当前插件版本」里找到可疑的那个，点「停用」。
-停用只是把它从加载列表里移掉，**不会删除任何文件**，随时可以「恢复启用」。
+停用会像官方插件管理器一样，在 profile 的 `cordis.patch.yml` 中写入对应入口的
+`disabled: true`。它**不会删除依赖、修改 bundles 或删除任何文件**，随时可以
+「恢复启用」，官方管理器与版本守卫看到的是同一份状态。
 
 ---
 
@@ -159,8 +161,10 @@ dsh-version-guard.cmd --list                :: 列出所有 profile
 | `package.json` | 依赖版本 + `dsh.profile.bundles` 加载列表 |
 | `cordis.patch.yml` | 用户补丁层（插件的启停与配置覆盖） |
 | `pnpm-lock.yaml` | 实际解析到的版本 |
-| `.dsh-version-guard/cordis.disabled.json` | 本工具记录的停用列表 |
-| `.dsh-market/state.json` | 插件市场的启停与分组（如果存在） |
+
+`.dsh-market/state.json` 由插件市场拥有，不属于 profile 组合真源，版本守卫不会
+快照或回写它。版本守卫也不再维护私有停用列表；插件启停唯一以
+`cordis.patch.yml` 为准。
 
 **不复制 `node_modules`。** 它可以从 `package.json` + `pnpm-lock.yaml` 用 pnpm
 重新装出来，复制它只会让快照大到无法管理。所以「配置回退」和「依赖同步」是两步，
@@ -193,7 +197,6 @@ dsh-version-guard.cmd --list                :: 列出所有 profile
 ```
 .dsh-version-guard/
 ├── boot.json                  启动记录：上次是否走完、连续失败次数
-├── cordis.disabled.json       本工具记录的停用列表（含停用时的版本）
 ├── guard.lock                 并发写锁
 └── snapshots/                 回退点，默认保留最近 30 个
     └── snap-<时间>-<类型>.json
@@ -229,8 +232,9 @@ dsh-version-guard.cmd --list                :: 列出所有 profile
 * **客户端远程调用走的是自己的 HTTP 路由**（`/dsh-version-guard/*`），
   而不是 typert/remote。这样不需要维护一份严格的类型描述文件，代价是它没有
   网关的计量与取消能力。
-* **单插件「停用」会同时从 `dependencies` 移除**，这是为了让 `pnpm install`
-  不会把它装回来。恢复启用时需要给一个版本范围（停用时会记下当时的版本）。
+* **单插件启停与官方插件管理器共用 `cordis.patch.yml`**。版本守卫写入对应入口的
+  `disabled` 覆盖，不删除 `dependencies` 或 `dsh.profile.bundles`，因此不会出现
+  一个界面显示启用、实际宿主仍未加载的双真源状态。
 
 ### 关于 profile 识别
 
@@ -289,11 +293,13 @@ dsh-version-guard.cmd --install
 ## 自检
 
 ```cmd
-node lib/tools/verify-package.js
+npm test
+npm run verify
 ```
 
-检查包约定（`exports`、`dsh.bundle`、`dsh.client`）、客户端必须是 classic script、
-所有相对 import 可解析、Cordis 补丁只做插入、以及路由挂载与前缀处理。
+测试覆盖 profile 识别优先级、官方格式的插件启停、市场状态不进入快照以及回退隔离；
+包约定检查覆盖 `exports`、`dsh.bundle`、`dsh.client`、classic script、相对 import、
+Cordis 补丁与路由挂载。GitHub Actions 会在 Node 22 和 24 上运行两组检查。
 
 ## 许可
 
