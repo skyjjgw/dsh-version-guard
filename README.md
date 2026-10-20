@@ -250,7 +250,7 @@ dsh-version-guard.cmd --list                :: 列出所有 profile
 `--profile web-enhanced` 时，环境里仍带着 `DSH_PROFILE=desktop`。若先信环境变量，
 在多 profile 的机器上就会把回退点写进另一个 profile —— 用户以为被保护了，
 实际用的那个 profile 一直没被记录。这个顺序有专门的回归测试
-（`lab4/profile-detect-test.mjs`）。
+（`test/profile-detect.test.js`）。
 
 ---
 
